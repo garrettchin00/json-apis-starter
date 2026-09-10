@@ -96,7 +96,7 @@ function getWord(word){
     const PATH = "https://freedictionaryapi.com/api/v1/entries/en/";
 
     // full path of endpoint to get a definition
-    let URL; // TO DO - complete the endpoint
+    let URL = `${PATH}${word}`; 
 
     // open the connection with the ajax object
     xhr.open("GET", URL);
@@ -105,7 +105,7 @@ function getWord(word){
 
     // send the request to the API
     xhr.send();
-
+}
 
 // this helper function clears out the input and output for the user word
 function resetInput(){
