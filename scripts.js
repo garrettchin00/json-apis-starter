@@ -31,36 +31,35 @@ function getWord(word){
     resetDisplay();
 
     // create ajax object
-    // TO DO
+    const xhr = new XMLHttpRequest();
 
     // ready state change event listener
-    // TO DO
+    xhr.addEventListener("readystatechange", function(){
         // when we get a response...
-        // TO DO
+        if(this.readyState === this.DONE){
             // log the returned text to the console
-            // TO DO
+            console.log(this.responseText);
 
             // parse the response into JSON, store in the wordInfo variable
-            let wordInfo; // TO DO
-
-            // check to see if an error was returned from the call (this happens when there are no entries, test in the browser with a nonsense string to see what is returned for an invalid word)
-            // TO DO
-                // display an error message to the user
-                // userWord.innerHTML = `You have entered <strong>${"TO DO"}</strong>, which is not a valid word`;
-
-                // clear the list to allow for an error message to be displayed
-                // resetDisplay(); // TO DO uncomment
-
-            // successful call
-            // TO DO
-                // display the word entered on the page
-                // userWord.innerHTML = `<strong>${word}</strong>`; // TO DO uncomment
+            let wordInfo = JSON.parse(this.responseText);
+        // check to see if an error was returned from the call (this happens when there are no entries, test in the browser with a nonsense string to see what is returned for an invalid word)
+        if(wordInfo.entries.length == 0){
+            // display an error message to the user
+            userWord.innerHTML = `You have entered <strong>${word}</strong>, which is not a valid word`;
+            
+            // clear the list to allow for an error message to be displayed
+            resetDisplay();
+        
+        // successful call
+        }else{
+            // display the word entered on the page
+            userWord.innerHTML = `<strong>${word}</strong>`;
                 
-                // clear the list to allow for new definitions to be displayed
-                // resetDisplay(); // TO DO uncomment
+            // clear the list to allow for new definitions to be displayed
+            resetDisplay();
 
-                // iterate through the response and display each part of speech followed by a list of the definitions for that part of speech
-                // NOTE: You will need to iterate through two collections to get all of the info you need to display
+            // iterate through the response and display each part of speech followed by a list of the definitions for that part of speech
+            // NOTE: You will need to iterate through two collections to get all of the info you need to display
 				/* 
 					-- the format for each part of speech and definitions is:
 					<li>Part of speech: ${the actual part of speech}
@@ -73,22 +72,25 @@ function getWord(word){
 					</li>
 
 				*/
-                // TO DO            
-    
+                for(let entry of wordInfo.entries){
+                    definitionList += `<li>Part of speech: ${entry.partOfSpeech}<ul>`; 
+                    
+                    // loop through the definitions and add to inner list
+                    for(let sense of entry.senses){
+                        definitionList += `<li>${sense.definition}</li>`;
+                    }
+                    
+                    definitionList += `</ul></li>`;
+                }
+                
                 // add the output string to the page
-                // display.innerHTML = definitionList; // TO DO uncomment
-
+                display.innerHTML = definitionList;
+                
                 // clear the user input to make room for another word
-                // resetInput(); // TO DO uncomment
-
-            // the closing bracket for the else statement handling a good response will go below
-            // TO DO
-
-        // the closing bracket for the if statement in the event handler when readyStatus changes to DONE will go below
-        // TO DO
-
-    // The closing bracket/parentheses for the readyStateChange event handler will go below
-    // TO DO
+                resetInput(); 
+            }        
+        }
+    });
 
     // start of endpoint to API
     const PATH = "https://freedictionaryapi.com/api/v1/entries/en/";
@@ -103,7 +105,7 @@ function getWord(word){
 
     // send the request to the API
     xhr.send();
-}
+
 
 // this helper function clears out the input and output for the user word
 function resetInput(){
